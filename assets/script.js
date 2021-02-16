@@ -8,6 +8,8 @@ var map;
 var marker;
 var search_results;
 var selected_location = [9.345007359408424, 77.47961053999771];
+var centered_location = selected_location;
+var zoom_level        = 3;
 
 (function($) {
 	function load_map() {
@@ -16,28 +18,44 @@ var selected_location = [9.345007359408424, 77.47961053999771];
 		var osmAttribution = 'Map data &copy; 2012 <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 		var osm            = new L.TileLayer(osmUrl, { maxZoom: 18, attribution: osmAttribution });
 
-		map.setView( selected_location, 3 ).addLayer( osm );
+		map.setView( selected_location, zoom_level ).addLayer( osm );
 
 		// on click map
 		map.on('click', function (e) {
 			selected_location = [e.latlng.lat, e.latlng.lng];
-			display_selected_location();
+			update_map_info();
 			set_marker();
+		});
+
+		// on zoom map
+		map.on('zoomend', function() {
+			zoom_level = map.getZoom()
+			update_map_info();
+		});
+		
+		// on move/drag map
+		map.on('dragend', function() {
+			set_centered_location();			
+			update_map_info();
 		});
 	}
 
 	function choose_address_result(key) {
 		var result        = search_results[key];
 		selected_location = [result.lat, result.lon];
+		zoom_level        = 10;
 
 		// set marker
 		set_marker();
 
 		// set the view
-		map.setView( selected_location, 10 );
+		map.setView( selected_location, zoom_level );
+
+		// set centered location
+		set_centered_location();
 
 		// dislpay selected location
-		display_selected_location();
+		update_map_info();
 	}
 
 	function set_marker() {
@@ -84,6 +102,11 @@ var selected_location = [9.345007359408424, 77.47961053999771];
 		});
 	}
 
+	function set_centered_location() {
+		var centered      = map.getCenter();
+		centered_location = [centered.lat, centered.lng];
+	}
+
 	function set_loading() {
 		$('#map-search-keywords').attr('disabled', 'disabled');
 		$('#map-search-button').attr('disabled', 'disabled');
@@ -97,9 +120,13 @@ var selected_location = [9.345007359408424, 77.47961053999771];
 	}
 	
 	// display selected location
-	function display_selected_location() {
+	function update_map_info() {
+		// update displayed info
 		$('#selected_lat').val(selected_location[0]);
 		$('#selected_lng').val(selected_location[1]);
+		$('#centered_lat').val(centered_location[0]);
+		$('#centered_lng').val(centered_location[1]);
+		$('#zoom_level').val(zoom_level);
 	}
 
 	// on marker dragend
@@ -108,7 +135,7 @@ var selected_location = [9.345007359408424, 77.47961053999771];
 		var lng = e.target._latlng.lng;
 
 		selected_location = [lat, lng];
-		display_selected_location();
+		update_map_info();
 	}
 
 	// on click search button
@@ -132,7 +159,7 @@ var selected_location = [9.345007359408424, 77.47961053999771];
 	});
 
 	// display initial selected location
-	display_selected_location();
+	update_map_info();
 
 	// start the map
 	window.onload = load_map;

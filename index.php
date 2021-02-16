@@ -16,14 +16,36 @@
 	<link rel="stylesheet" href="assets/style.css" />	
 </head>
 <body>
+	
 	<div id="search">
 		<input type="text" name="map-search-keywords" id="map-search-keywords">
-		<button href="javascript:;" id="map-search-button"">Search on Map</button>
-		<input type="text" id='selected_lat' readonly=readonly>
-		<input type="text" id='selected_lng' readonly=readonly>
-		<div id='map-search-results'></div>
+		<button href="javascript:;" id="map-search-button"">Search on Map</button>		
 	</div>
 
+	<table>
+		<tr>
+			<td>Lattitude</td>
+			<td><input type="text" id='selected_lat' disabled></td>
+		</tr>
+		<tr>
+			<td>Longitude</td>
+			<td><input type="text" id='selected_lng' disabled></td>
+		</tr>
+		<tr>
+			<td>Centered Lattitude</td>
+			<td><input type="text" id='centered_lat' disabled></td>
+		</tr>
+		<tr>
+			<td>Centered Longitude</td>
+			<td><input type="text" id='centered_lng' disabled></td>
+		</tr>
+		<tr>
+			<td>Zoom Level</td>
+			<td><input type="text" id='zoom_level' disabled></td>
+		</tr>
+	</table>
+
+	<div id='map-search-results'></div>
 	<div id="map-canvas"></div>
 
 	<!-- load scripts -->
